@@ -1,0 +1,47 @@
+def prefix_to_mask(prefix):
+    mask = []
+    for i in range(4):
+        if prefix >= 8:
+            mask.append(255)
+            prefix -= 8
+        else:
+            mask.append(256 - (2 ** (8 - prefix)) if prefix > 0 else 0)
+            prefix = 0
+    return ".".join(map(str, mask))
+
+
+def subnetting():
+    ip = input("Enter IP address: ")
+    subnets = int(input("Enter number of subnets required: "))
+
+    first_octet = int(ip.split('.')[0])
+
+    # Default prefix
+    if 1 <= first_octet <= 126:
+        default_prefix = 8
+    elif 128 <= first_octet <= 191:
+        default_prefix = 16
+    elif 192 <= first_octet <= 223:
+        default_prefix = 24
+    else:
+        print("Invalid IP")
+        return
+
+    # Calculate bits
+    bits = 0
+    while (2 ** bits) < subnets:
+        bits += 1
+
+    new_prefix = default_prefix + bits
+    hosts = (2 ** (32 - new_prefix)) - 2
+
+    # Convert prefix to full mask
+    full_mask = prefix_to_mask(new_prefix)
+
+    print("\nNew Subnet Mask (CIDR): /", new_prefix)
+    print("Subnet Mask (Dotted Decimal):", full_mask)
+    print("Number of Hosts per Subnet:", hosts)
+
+
+# Run
+subnetting()
