@@ -1,0 +1,32 @@
+import socket
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+server.bind(('172.22.102.251', 5000))
+server.listen(1)
+
+print("Server waiting for connection...")
+
+conn, addr = server.accept()
+print("Connected with", addr)
+
+msg = conn.recv(1024).decode()
+print("Client says:", msg)
+
+conn.send("Hello from server".encode())
+
+conn.close()
+server.close()
+
+import socket
+
+client= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+client.connect(('172.22.102.251', 5000))
+
+client.send("Hello from client".encode())
+
+msg = client.recv(1024).decode()
+print("Server says:", msg)
+
+client.close()
